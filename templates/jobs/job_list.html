@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block header %}
+	<h1> All Jobs ({{ job_count }})</h1>
+{% endblock header %}
+
+{% block content %}
+<body id="job-list-page" onload="tabStatus();">
+  <div class="header-links"> 
+  	<p> 
+  		<a class="btn btn-success" href="{% url 'job_create' %}" class="text-dark" 
+  		style="text-decoration:none;"> + Create job </a> |
+  		<a href="{% url 'job_list_open' %}" class="text-dark" 
+  		style="text-decoration:none;"> Open jobs </a> |
+  		<a href="{% url 'job_list_closed' %}" class="text-dark" 
+  		style="text-decoration:none;"> Closed jobs </a> 
+  	</p>
+
+  <div class="table-responsive table-hover" >
+   
+    <table id="job-list-table" class="table">
+      <thead> 
+        <tr>
+          <th>id</th>
+          <th>Job Title</th>
+          <th>Created by</th>
+          <th>Created on</th>
+          <th>Updated on</th>
+          <th>Deadline</th>
+          <th>Current status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for job in jobs %}
+        <tr >
+          <td class="tab-status">{{ job.id }}</td>
+          <td class="tab-status"><a href="{% url 'job_detail' job.pk %}" class="text-dark" 
+              style="text-decoration:none;"> {{ job.job_title }}</a></td>
+          <td class="tab-status"><a href="{% url 'user:profile' job.author %}" class="text-dark"
+              style="text-decoration:none;"> {{ job.author }} </a></td>
+          <td class="tab-status">{{ job.created_date|date:'d-m-y, H:i'}}</td>
+          <td class="tab-status">{{ job.last_update |date:'d-m-y, H:i' }}</td>
+          <td class="tab-status">{{ job.deadline|date:'d-m-y' }}</td>
+          <td class="tab-status" >{{ job.job_status }}</td>
+        {% empty %}
+          <td> No jobs have been created </td>>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  </div>
+  <!page pagination>
+  <div class="pagination">
+      {%if jobs.has_previous%}
+        <a class = "btn btn-outline-secondary mb-4" href="?page=1">First</a>
+        <a class = "btn btn-outline-secondary mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+      {%endif%}
+
+      {% for num in jobs.paginator.page_range %}
+        {% if jobs.number == num %}
+          <a class = "btn btn-secondary mb-4" href="?page={{ num }}">{{ num }}</a>
+        {% elif num > jobs.number|add:'-3' and num < jobs.number|add:'3'%}
+        <a class = "btn btn-outline-secondary mb-4" href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+      {% endfor %}
+
+      {% if jobs.has_next %}
+        <a class = "btn btn-outline-secondary mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
+        <a class = "btn btn-outline-secondary mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+      {%endif%}
+  </div>
+</body>
+
+{% endblock content %}

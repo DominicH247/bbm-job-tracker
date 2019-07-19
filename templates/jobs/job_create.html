@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+
+<h1>Create Job</h1>
+{{ form.media }}
+
+<form action="" method="post">
+	{% csrf_token %}
+	{{ form|crispy }}
+	{{ objective_form|crispy }}
+	<input type="submit" class ="btn btn-success" value="Submit">
+</form>
+
+{% endblock content %}
+

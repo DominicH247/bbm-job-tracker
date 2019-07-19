@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<body id=job-detail-page onload="statusIndicator(); deadlineIndicator();">
+  <div class="container">
+    <h1> {{ job_details.job_title }} </h1>
+    <br>
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active" data-toggle="tab" href="#job-detail">Detail</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#personnel">Personnel</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#objectives">Objectives</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#comments">Comments</a>
+      </li>
+    </ul>
+  </div>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+      <div id="job-detail" class="container tab-pane active"><br>
+        <p> {{ job_details.job_text }} </p>
+        <p> <i class="fa fa-clock"></i> created on: {{ job_details.created_date|date:"d-m-Y, h:i" }} |
+          <b>deadline on: {{ job_details.deadline|date:"d-m-Y" }}</b>
+        </p>
+        <!-- status indicator -->
+        <div class="status-indicator">
+          <h3 id = "status-text">{{ job_details.job_status }}</h3>
+        </div>  
+        <br>    
+        <div class="deadline-status">
+          <h3>{{deadline_context}}</h3>
+        </div>
+        <br>
+        <a class="btn btn-info" role="button" href="{% url 'job_update' job_details.id %}"> 
+          Edit 
+        </a>   
+      </div>
+      <div id="personnel" class="container tab-pane fade"><br>
+      	<h3> Created by </h3>
+      	<h5>
+      		<i class="fa fa-user-circle"></i> {{ job_details.author }}
+      	<h5>
+        <br>
+      	<h3>Additonal</h3>
+      	<p> Additional personnel involved in the project </p>
+      	{% for personnel in job_details.personnel.all %}
+  				<a href="#"> <i class="fa fa-user-plus"></i>  {{ personnel }} </a>
+  					<br>
+  				{% endfor %}
+      </div>
+      <!-- Objectives tab -->
+      <div id="objectives" class="container tab-pane fade"><br>
+        <h3>Objectives</h3>
+        	<a href="{% url 'objective_create' job_details.id  %}" class="btn btn-outline-secondary" role="button">Add objective</a>
+        	<br>
+        <div class = "objectives-section">
+  				{% for obj in objectives.all %}
+  				<br>
+  				<div class=" objective card bg-light">
+  					<div class = "objective card-body">
+  						<h4> 
+                <a href="{% url 'objective_detail' job_details.pk obj.pk %}">{{ obj.objective_description }}</a>  
+  						</h4>    
+  					</div>
+  					<div class="objective card-footer">
+  						<h4>  {{ obj.objective_status }} </h4>
+  					</div>
+  				</div> 
+  				<br>
+  				{% empty %}
+  					<br>
+  					<p> No objectives set </p>
+  				{% endfor %}
+  			</div>
+      <!-- comments tab -->
+      </div>
+      <div id="comments" class="container tab-pane fade"><br>
+      	<h3> General Comments </h3>
+  			{% for comment in job_details_pag %}
+  				<h6>
+  					<i class="fa fa-user-circle"></i>  
+  					{{ comment.comment_by }} | 
+  					<i class="fa fa-clock"></i>
+  					{{ comment.comment_date | date:"d-m-y, H:i" }}
+  				</h6> 				
+  				<p>{{ comment.text}}</p>
+  				<br>
+  			{% empty %}
+  				<p>No comments here yet</p>
+  			{% endfor %}
+  			<!-- comment form -->
+  			<div id = "comment-form">	
+  				<form action="" method="post">
+  					{% csrf_token %}
+  					{{ form|crispy }}
+  					<input type="submit" class="btn btn-success" value="Submit">
+  				</form>
+  			</div>	
+      </div> 
+    </div>
+</body>
+
+ 
+<!-- <!page pagination>
+<div class="pagination">
+    {%if job_details_pag.has_previous%}
+      <a class = "btn btn-outline-secondary mb-4" href="?page=1">First</a>
+      <a class = "btn btn-outline-secondary mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+    {%endif%}
+
+    {% for num in job_details_pag.paginator.page_range %}
+      {% if job_details_pag.number == num %}
+        <a class = "btn btn-secondary mb-4" href="?page={{ num }}">{{ num }}</a>
+      {% elif num > job_details_pag.number|add:'-3' and num < job_details_pag.number|add:'3'%}
+      <a class = "btn btn-outline-secondary mb-4" href="?page={{ num }}">{{ num }}</a>
+      {% endif %}
+    {% endfor %}
+
+    {% if job_details_pag.has_next %}
+      <a class = "btn btn-outline-secondary mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
+      <a class = "btn btn-outline-secondary mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+    {%endif%}
+</div>
+ -->
+
+{% endblock content %}
+

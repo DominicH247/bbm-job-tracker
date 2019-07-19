@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div id="obj-page-header">
+	<h1>{{ objective.objective_description }}</h1>
+</div>
+<br>
+<!-- Objective comment display -->
+<div id="objective-comments">
+	<h3> Comments </h3>
+	{% for comment in obj_pag %}
+		<h6>
+			<i class="fa fa-user-circle"></i>  
+			{{ comment.comment_by }} | 
+			<i class="fa fa-clock"></i>
+			{{ comment.comment_date | date:"d-m-y, H:i" }}
+		</h6> 				
+		<p>{{ comment.text}}</p>
+		<br>
+	{% empty %}
+		<p>No comments here yet</p>
+	{% endfor %}
+</div>
+<!-- comment form -->
+<div id = "comment-form">	
+	<form action="" method="post">
+		{% csrf_token %}
+		{{ form|crispy }}
+		<input type="submit" class="btn btn-success" value="Submit">
+	</form>
+</div>	
+<br>
+<!-- pagination  -->
+<div class="pagination">
+    {%if obj_pag.has_previous%}
+      <a class = "btn btn-outline-info mb-4" href="?page=1">First</a>
+      <a class = "btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+    {%endif%}
+
+    {% for num in obj_pag.paginator.page_range %}
+      {% if obj_pag.number == num %}
+        <a class = "btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+      {% elif num > obj_pag.number|add:'-3' and num < obj_pag.number|add:'3'%}
+      <a class = "btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+      {% endif %}
+    {% endfor %}
+
+    {% if obj_pag.has_next %}
+      <a class = "btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
+      <a class = "btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+    {%endif%}
+</div>
+
+{% endblock content %}

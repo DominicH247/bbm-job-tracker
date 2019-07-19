@@ -1,0 +1,146 @@
+/*global*/
+
+h1 {
+	font-size: 50px;
+}
+
+/*base*/
+/*overwrite bootstrap nav bar colour*/
+#base-navbar{
+	background-color: rgb(
+	0,
+	180,
+	130
+	) !important;
+}
+/*overwrite bootstrap nav bar username link colour &opacity */
+#base-navbar-link-username{
+	color: rgba(
+		255,
+		255,
+		255,
+		1
+		) !important;
+	font-size: 1.1rem !important;
+}
+/*overwrite bootstrap nav bar notification link colour and opacity*/
+#base-navbar-link-notification{
+		color: rgba(
+		255,
+		255,
+		255,
+		1
+		) !important;
+	font-size: 1.1rem !important;
+}
+
+/*overwrite bootstrap nav bar nav-brand*/
+.navbar-brand {
+    font-size: 1.4rem !important;
+    font-weight: 500;
+}
+
+/*job detail */
+#status-text {
+	font-weight: 600;
+}
+
+.status-indicator *{
+	color: black;
+	background-color: rgba(
+		255,
+		255,
+		255,
+		0.5
+	);
+	border-radius: 5px;
+}
+
+.status-open-indicator {
+	color: white;
+	text-align: center;
+	background-color: rgba(
+		229,
+		135,
+		40,
+		1
+	);
+	width: 150px;
+	border-radius: 5px;
+}
+
+.status-closed-indicator {
+	color: white;
+	text-align: center;
+	background-color: rgba(
+		0,
+		180,
+		130,
+		1
+	); 
+	width: 150px;
+	border-radius: 5px;
+}
+
+.deadline-status{
+	color: black;
+	background-color: rgba(
+		255,
+		255,
+		255,
+		1
+	);
+	border-radius: 5px;
+}
+
+
+.deadline-status-over{
+	color: white;
+	background-color: rgba(
+		229,
+		33,
+		1,
+		1
+	);
+	border-radius: 5px;
+}
+
+.deadline-status-okay{
+	color: white;
+	background-color: rgba(
+		0,
+		180,
+		130,
+		1
+	);
+	border-radius: 5px;
+}
+
+
+/*job list table*/
+.tab-status{
+	background-color: white;
+	
+}
+
+.tab-status-closed{
+	color: white;
+	background-color: rgba(
+		0,
+		180,
+		130,
+		1
+	);
+}
+
+.tab-status-open{
+	color: white;
+	background-color: rgba(
+		229,
+		135,
+		40,
+		1
+	);
+}
+
+/*JOB DETAIL PAGE*/

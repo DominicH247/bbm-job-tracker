@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+
+{% block header %}
+	<h1> Closed Jobs ({{ job_closed_count }})</h1>
+{% endblock header %}
+
+{% block content %}
+<div class="header-links"> 
+	<p> 
+		<a href="{% url 'job_create' %}" class="text-dark" 
+		style="text-decoration:none;"> + Create job </a> |
+		<a href="{% url 'job_list_open' %}" class="text-dark" 
+		style="text-decoration:none;"> Open jobs </a> |
+		<a href="{% url 'job_list_closed' %}" class="text-dark" 
+		style="text-decoration:none;"> Closed jobs </a> 
+	</p>
+  {% for job in jobs %}
+  	<div class="card">
+  		<div class="card-header">
+  			<h3>
+					<a href="{% url 'job_detail' job.pk %}" class="text-dark" 
+					style="text-decoration:none;"> {{ job.job_title }} </a>
+					<small>
+						- {{ job.created_date|date:'M d Y, H:i'}}
+					</small>
+				</h3>
+				<p> 
+					<a href="{% url 'user:profile' job.author %}" class="text-dark"> 
+					{{ job.author }} </a> 
+				</p>
+			</div>
+			<div class="card-body">
+				{{ job.job_text|linebreaks }}
+			</div>
+		</div>
+		<br>
+	{% empty %}
+		<p> No jobs have been created <p>
+	{% endfor %}
+{% endblock content %}
+

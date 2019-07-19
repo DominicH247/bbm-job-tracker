@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1> {{user.username}} </h1>
+<p> Email: {{ user.email }} </p>
+<p> First name: {{ user.first_name }} </p>
+<p> Last name: {{ user.last_name }} </p>
+<p> Position: {{ user.Position }} </p>
+
+<!-- only display edit link if logged in user is viewing own profile  -->
+{% if user == request.user %}
+	<a href="{% url 'user:profile_update' request.user.username %}">Edit profile</a>
+{% endif %}
+
+<h2> All jobs rasied by {{ user.username }} ({{ user_job_count }})</h2>
+{% for jobs in user_jobs %}
+	 <li> {{ jobs }} - {{ jobs.created_date }} </li>
+ {% endfor %}
+
+
+{% endblock content %}

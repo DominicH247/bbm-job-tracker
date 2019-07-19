@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load notifications_tags %}
+{%block content%}
+  <h1> Notifications </h1>
+  {% for notice in notifications %} 
+    <h4> 
+      {{ notice.actor }} 
+      {{ notice.verb }}
+      {% if notice.target %}
+        on <a href="{% url 'job_detail' notice.target.pk %}">{{ notice.target }}</a>
+      {% endif %}
+    </h4>
+    <a href="{% url 'notifications:mark_as_read' notice.slug %}">read</a>
+    <a href="{% url 'notifications:mark_as_unread' notice.slug %}">unread</a>
+    <a href="{% url 'notifications:delete' notice.slug %}">delete</a>
+    <p>{{ notice.timesince }} ago</p>
+    {% empty %}
+      <p> You have no unread notifications. To view all your notifications, 
+        follow the <a href="{% url 'notifications:all' %}"> link </a>.
+      </p>
+  {% endfor %}
+{% endblock content %}
