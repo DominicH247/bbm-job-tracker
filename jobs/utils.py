@@ -2,7 +2,7 @@ from datetime import date
 from jobs.models import Job
 
 class Deadline:
-	"""Class to retreive job deadlines"""
+	"""Class to retreive job deadliness"""
 	def __init__(self, job_id):
 		self.job_id = job_id
 		# self.job_deadline = job_deadline	
@@ -21,7 +21,4 @@ class Deadline:
 		else: 
 			message_under = ("You have {0} days until the deadline.".format(days_left))
 			return message_under
-
-
-
 
