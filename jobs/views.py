@@ -9,9 +9,10 @@ from comments.forms import UserCommentForm, ObjectiveCommentForm
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.core.paginator import Paginator
-from comments.utils import notify_job_auth_comment, notify_job_personnel_comment
+from comments.utils import notify_job_auth_comment, notify_job_personnel_comment, UserNotification
 from datetime import date
 from .utils import Deadline
+
 
 #  users must be logged in to view the pages @login_required
 #  decorators have been used
@@ -63,12 +64,10 @@ def job_detail(request, job_details_id):
 		comments = job_details.comments.all()
 		objectives = job_details.objectives.all()
 		deadline = Deadline(job_details)
-		# objectives = job.details.objective_comments.all()
 		#  return  all personnel in jobs (m2m) as list for notifications
+		personnel_list = job_details.personnel.exclude(id = request.user.id)
 		#  for m2m field rtn as related object manager not iterable
 		#  must use .all() to convert it to a queryset
-		# personnel = list(job_details.personnel.all())
-	
 		#  user comment form 
 		if request.method == 'POST':
 			form = UserCommentForm(request.POST)
@@ -79,24 +78,17 @@ def job_detail(request, job_details_id):
 				user_comment.job = job_details
 				user_comment.comment_by = request.user
 				user_comment.save()
-				#  notify job author of comment 
-				notify_job_auth_comment(
-					user_comment.comment_by, 
-					job_details.author,
-					sender = user_comment.comment_by,
-					recipient = job_details.author,
-					verb = "commented",
-					target = job_details
+				# notify author and associated personnel of user comments
+				comment_notification = UserNotification(
+					sender=user_comment.comment_by, 
+					personnel_list = personnel_list,
+					author = job_details.author, 
+					recipient=job_details.author, 
+					verb= "commented", 
+					target=job_details
 					)
-				#  notify personel associated to job when user comments
-				#  exclude commentor from recieving notification if he made the comment
-				personnel_list = job_details.personnel.exclude(id = request.user.id)
-				notify_job_personnel_comment(
-					sender = user_comment.comment_by,
-					recipient = personnel_list,
-					verb = "commented",
-					target = job_details
-					)
+				comment_notification.send_notification_author();
+				comment_notification.send_notification_personnel();
 
 				return redirect('job_detail', job_details_id=job_details.id)
 		else:
