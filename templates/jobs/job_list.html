@@ -14,12 +14,11 @@
   		style="text-decoration:none;"> + Create job </a> |
   		<a href="{% url 'job_list_open' %}" class="text-dark" 
   		style="text-decoration:none;"> Open jobs </a> |
-  		<a href="{% url 'job_list_closed' %}" class="text-dark" 
-  		style="text-decoration:none;"> Closed jobs </a> 
+  		<a href="{% url 'job_list_closed' %}" class="text-dark" style="text-decoration:none;"> Closed jobs </a> 
   	</p>
+  </div>  
 
-  <div class="table-responsive table-hover" >
-   
+  <div class="list-table">
     <table id="job-list-table" class="table">
       <thead> 
         <tr>
@@ -45,12 +44,11 @@
           <td class="tab-status">{{ job.deadline|date:'d-m-y' }}</td>
           <td class="tab-status" >{{ job.job_status }}</td>
         {% empty %}
-          <td> No jobs have been created </td>>
+          <td> No jobs have been created </td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
-
   </div>
   <!page pagination>
   <div class="pagination">

@@ -9,7 +9,7 @@ from comments.forms import UserCommentForm, ObjectiveCommentForm
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.core.paginator import Paginator
-from comments.utils import notify_job_auth_comment, notify_job_personnel_comment, UserNotification
+from comments.utils import UserNotification
 from datetime import date
 from .utils import Deadline
 
@@ -84,11 +84,11 @@ def job_detail(request, job_details_id):
 					personnel_list = personnel_list,
 					author = job_details.author, 
 					recipient=job_details.author, 
-					verb= "commented", 
+					verb= "commented on", 
 					target=job_details
 					)
-				comment_notification.send_notification_author();
-				comment_notification.send_notification_personnel();
+				comment_notification.notif_author()
+				comment_notification.notif_personnel()
 
 				return redirect('job_detail', job_details_id=job_details.id)
 		else:
@@ -147,6 +147,7 @@ def job_create(request):
 def objective_create(request, job_details_id):
 	job_details = Job.objects.get(id=job_details_id)
 	objectives = job_details.objectives.all()
+	personnel_list = job_details.personnel.exclude(id = request.user.id)
 	"""set objective within the project"""
 	if request.method == 'POST':
 		objective_form = ObjectiveCreateForm(request.POST)
@@ -155,6 +156,17 @@ def objective_create(request, job_details_id):
 			new_objective.job = job_details  # link objective to the the current job
 			new_objective.save() 
 			# return redirect('job_detail', job_details_id)
+			# notify author and personnel of job creation
+			new_obj_notif = UserNotification(
+					sender=request.user, 
+					personnel_list = personnel_list,
+					author = job_details.author,
+					recipient=job_details.author, 
+					verb= "created a new objective in", 
+					target=job_details
+					)
+			new_obj_notif.notif_author()
+			new_obj_notif.notif_personnel()
 			return redirect('objective_create', job_details_id)
 	else:
 		objective_form = ObjectiveCreateForm()
@@ -165,32 +177,6 @@ def objective_create(request, job_details_id):
 		}
 
 	return render(request, 'jobs/objective_create.html', context)
-
-# #  adopted formset approach to allow for multiple additions of objectives 
-# @login_required
-# def objective_create(request, job_details_id):
-# 	job_details = Job.objects.get(id=job_details_id)
-# 	# ObjectiveFormSet = ObjectiveCreateFormSet()
-# 	ObjectiveInlineFormSet= inlineformset_factory(
-# 		Job,
-# 		Objective,
-# 		form=JobCreateForm,
-# 		fields =('objective_description', 'objective_status', job_title),
-# 		extra=0,
-# 		can_delete = False
-# 	)
-# 	"""set objective within the project"""
-# 	if request.method == 'POST':
-# 		formset = ObjectiveInlineFormSet(request.POST, request.FILES, instance=job_details)
-# 		if formset.is_valid():
-# 			formset.save()
-# 			return redirect('job_detail', job_details_id)
-# 	else:
-# 		#  GET
-# 		formset = ObjectiveInlineFormSet(instance=job_details)
-# 	return render(request, 'jobs/objective_create.html', {'formset': formset, })
-
-
 
 
 def objective_detail(request, job_details_id, objective_id):

@@ -7,7 +7,7 @@
       {{ notice.actor }} 
       {{ notice.verb }}
       {% if notice.target %}
-        on <a href="{% url 'job_detail' notice.target.pk %}">{{ notice.target }}</a>
+        <a href="{% url 'job_detail' notice.target.pk %}">{{ notice.target }}</a>
       {% endif %}
     </h4>
     <a href="{% url 'notifications:mark_as_read' notice.slug %}">read</a>
