@@ -26,9 +26,13 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     #  django built in user authentication urls
     path('user/', include('django.contrib.auth.urls')),
-    #  django-notifications
+    # products
+    path('products/', include('products.urls')),
+    #  variation tracker
+    path('variationtracker/', include('variationtracker.urls')),
+        #  django-notifications
     path('user/notifications', include(notifications.urls, namespace = 'notifications')),
-    
+
 ]
 
 urlpatterns += staticfiles_urlpatterns()

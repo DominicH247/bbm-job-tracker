@@ -42,6 +42,10 @@ INSTALLED_APPS = [
     'user.apps.UserConfig',
     'jobs.apps.JobsConfig',
     'comments.apps.CommentsConfig',
+    'products.apps.ProductsConfig',
+    'variationtracker.apps.VariationtrackerConfig',
+
+
     # installed 
     'notifications',
     'crispy_forms',
