@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<div class="table-title">
+		<h1> All Variations({{ variation_count }})</h1>
+		<br>
+	</div>
+
+  <div class="product-table">
+    <table id="product-list-table" class="table">
+      <thead> 
+        <tr>
+          <th>Product name</th>
+          <th>Solution number</th>
+          <th>Licence number</th>
+          <th>Procedure type</th>
+          <th>Catagory</th>
+          <th>MAH</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for variation in variation_list %}
+        <tr >
+          <td>{{ variation.lra_reference}}</td>
+          <td>{{ product.solution_number }}</td>
+          <td>{{ product.licence_number }}</td>
+          <td>procedure number</td>
+          <td>catagory</td>
+          <td>{{ product.licence_holder }}</td>
+        {% empty %}
+          <td> No product </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+
+{% endblock content %}

@@ -1,8 +1,9 @@
 from django.urls import path, include
 
-from . import views
+from .views import VariationListView, VariationDetailView
 
 urlpatterns = [
-    path('variationtracker/variations', VariationListView.as_View(), name='variation_list'),
+    path('list/', VariationListView.as_view(), name='variation_list'),
+    path('<int:pk>/', VariationDetailView.as_view(), name='variation_detail')
     
 ]

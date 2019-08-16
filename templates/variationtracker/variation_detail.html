@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+	
+	<h1> LRA: {{ variation_detail.lra_reference }} </h1>
+
+	<h3> {{ variation_detail.variation_status }} </h3>
+
+	{% for item in variation_detail.product.all %}
+		<h3> {{ item }}  </h3>
+
+	{% endfor  %}
+
+	<p> Date recieved{{ variation_detail.date_recieived}} </p>
+
+	{% if variation_detail.variation.procedure_number == 'None' %}
+		<p> Procedure number: Awaiting
+	{% else %}
+		<p> Procedure number:{{ variation_detail.procedure_number }} </p>
+	{% endif %}
+
+	<p> Variation type: {{ variation_detail.variation_type }} </p>
+	<p> Variation reason: {{ variation_detail.variation_reason }} </p>
+	<p> Details: {{ variation_detail.variation_description }}</p>
+
+	<p>Variation outcome: {{variation_detail.variation_outcome}} </p>
+	{% if variation_detail.variation_outcome == "Approved"%}
+		<p>Variation outcome: {{ variation_detail.variation_outcome }} </p>
+		<p> Approval date: {{ variation_detail.date_approval }}</p>
+	{% endif %}
+
+	{% for person in variation_personnel.all %}
+	<p> personnel</p>
+	{% endfor %}
+
+
+{% endblock content %}

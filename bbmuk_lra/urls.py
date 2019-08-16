@@ -29,7 +29,7 @@ urlpatterns = [
     # products
     path('products/', include('products.urls')),
     #  variation tracker
-    path('variationtracker/', include('variationtracker.urls')),
+    path('variations/', include('variationtracker.urls')),
         #  django-notifications
     path('user/notifications', include(notifications.urls, namespace = 'notifications')),
 
