@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from products.models import PharmaProduct
 from user.models import CustomUser
 
@@ -7,11 +8,11 @@ class Variation(models.Model):
     """Variation model"""
     # automatically assign reference
     lra_reference = models.CharField(max_length=100)
+    date_added = models.DateField(auto_now_add=True)
     product = models.ManyToManyField(PharmaProduct)
     procedure_number = models.CharField(
         max_length=50, blank=True, default='Awaiting')
     variation_description = models.TextField()
-    date_recieived = models.DateField(auto_now_add=True)  # can be edited
     owner = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
@@ -19,12 +20,8 @@ class Variation(models.Model):
         related_name='owners'
     )
     personnel = models.ManyToManyField(CustomUser, blank=True)
-    date_pre_submission = models.DateField(null=True, blank=True)
-    date_submission = models.DateField(null=True, blank=True)
-    date_approval = models.DateField(null=True, blank=True)
-    date_internal_approval_completion = models.DateField(null=True, blank=True)
+    planned_submission_date = models.DateField(null=True, blank=True)
     date_variation_closed = models.DateField(null=True, blank=True)
-
     # Variation status choices
     OPEN = 'Open'
     CLOSED = 'Closed'
@@ -37,7 +34,7 @@ class Variation(models.Model):
         max_length=15,
         null=True,
         blank=True,
-        default=''
+        default='Open'
     )
     # Raised by choices
     LRA = 'LRA'
@@ -55,7 +52,7 @@ class Variation(models.Model):
         max_length=10,
         null=True,
         blank=True,
-        default=''
+        default='GRA'
     )
 
     # Variation Type
@@ -99,112 +96,40 @@ class Variation(models.Model):
     def __str__(self):
         return self.lra_reference
 
+    def get_absolute_url(self):
+        """absolute URL of Variation model"""
+        return reverse('variation_detail', kwargs={'pk': self.pk})
 
-class PreSubmissionPhase(models.Model):
-    """Pre submission phase"""
+
+class VariationPhase(models.Model):
+    """Variation log"""
     variation = models.ForeignKey(
         Variation,
         on_delete=models.CASCADE,
         null=True,
-        related_name='presubmissions'
+        related_name='logs'
     )
-    actions = models.TextField()
-    date_completed = models.DateField(null=True, blank=True)
-
-
-class SubmissionPhase(models.Model):
-    """Pre submission phase"""
-    variation = models.ForeignKey(
-        Variation,
-        on_delete=models.CASCADE,
-        null=True,
-        related_name='submissions'
-    )
-    # CESP submission, direct submission
-    CESP = 'CESP'
-    DIRECT = 'Direct'
-
-    SUBMISSION_TYPE_CHOICES = (
-        (CESP, 'CESP'),
-        (DIRECT, 'Direct'),
-
-    )
-    submission_type = models.CharField(
-        choices=SUBMISSION_TYPE_CHOICES,
-        max_length=10,
-        default='CESP'
-    )
-    details = models.TextField()
-    date_added = models.DateField(auto_now_add=True)
-    date_submitted = models.DateField(null=True, blank=True)
-
-
-class DecisionPhase(models.Model):
-    variation = models.ForeignKey(
-        Variation,
-        on_delete=models.CASCADE,
-        null=True,
-        related_name='decisions'
-    )
-    AWAITING = 'Awaiting'
-    APPROVED = 'Approved'
-    RFI_PVAR = 'RFI/PVAR'
-    REJECTED = 'Rejected'
+    #  variation log choices
+    PRE_SUBMISSION_PHASE = 'Pre-submission Phase'
+    SUBMISSION_PHASE = 'Submission Phase'
+    POST_SUBMISSION_PHASE = 'Post Submission Phase'
+    INTERNAL_APPROVAL_PHASE = 'Internal Approval Phase'
+    NATIONAL_PHASE = 'National Phase'
     DECISION_CHOICES = (
-        (AWAITING, 'Awaiting'),
-        (APPROVED, 'Approved'),
-        (RFI_PVAR, 'RFI/PVAR'),
-        (REJECTED, 'Rejected'),
+        (PRE_SUBMISSION_PHASE, 'Pre-Submission Phase'),
+        (SUBMISSION_PHASE, 'Submission Phase'),
+        (POST_SUBMISSION_PHASE, 'Post Submission Phase'),
+        (INTERNAL_APPROVAL_PHASE, 'Internal Approval Phase'),
+        (NATIONAL_PHASE, 'National Phase'),
     )
-    decision = models.CharField(
+    phase = models.CharField(
         choices=DECISION_CHOICES,
-        max_length=10,
-        default='AWAITING'
-    )
-    addional_details = models.TextField()
-    decision_date = models.DateField()
-
-
-class PostDecisionPhase(models.Model):
-    variation = models.ForeignKey(
-        Variation,
-        on_delete=models.CASCADE,
-        null=True,
-        related_name='postdecisions'
+        max_length=30,
+        default='PresubmissionPhase'
     )
     details = models.TextField()
     date_added = models.DateField(auto_now_add=True)
     date_completed = models.DateField(null=True, blank=True)
 
-
-class InternalApprovalPhase(models.Model):
-    """internal approval class"""
-    variation = models.ForeignKey(
-        Variation,
-        on_delete=models.CASCADE,
-        null=True,
-        related_name='approvals'
-    )
-    details = models.TextField()
-    date_added = models.DateField(auto_now_add=True)
-    date_completed = models.DateField(null=True, blank=True)
-
-
-class NationalPhase(models.Model):
-    """national phase class"""
-    variation = models.ForeignKey(
-        Variation,
-        on_delete=models.CASCADE,
-        null=True,
-        related_name='nationalphases'
-    )
-    #  national phase requirement choices
-    YES = 'Yes'
-    NO = 'N/A'
-    NATIONALPHASE_REQUIERMENT_CHOICES = (
-        (YES, 'Yes'),
-        (NO, 'N/A'),
-    )
-    details = models.TextField()
-    date_added = models.DateField(auto_now_add=True)
-    date_completed = models.DateField(null=True, blank=True)
+    def __str__(self):
+        return self.phase
